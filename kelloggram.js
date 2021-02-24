@@ -25,6 +25,7 @@ firebase.auth().onAuthStateChanged(async function(user) {
     })
 
     // Listen for the form submit and create/render the new post
+    // replace with netlify?
     document.querySelector('form').addEventListener('submit', async function(event) {
       event.preventDefault()
       let postUsername = user.displayName
@@ -42,15 +43,19 @@ firebase.auth().onAuthStateChanged(async function(user) {
     })
 
     // 🔥 LAB STARTS HERE 🔥
-    let querySnapshot = await db.collection('posts').orderBy('created').get()
-    let posts = querySnapshot.docs
+    // let querySnapshot = await db.collection('posts').orderBy('created').get()
+    // let posts = querySnapshot.docs
+
+    let response = await fetch(`/.netlify/functions/get_posts`)
+    let posts = await response.json()
+
     for (let i=0; i<posts.length; i++) {
       let postId = posts[i].id
-      let postData = posts[i].data()
-      let postUsername = postData.username
-      let postImageUrl = postData.imageUrl
-      let querySnapshot = await db.collection('likes').where('postId', '==', postId).get()
-      let postNumberOfLikes = querySnapshot.size
+      // let postData = posts[i].data()
+      let postUsername = posts.postUsername
+      let postImageUrl = posts.imageUrl
+      // let querySnapshot = await db.collection('likes').where('postId', '==', postId).get()
+      let postNumberOfLikes = 1
       renderPost(postId, postUsername, postImageUrl, postNumberOfLikes)
     }
     // 🔥 LAB ENDS HERE 🔥
